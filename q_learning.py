@@ -6,7 +6,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 
-
+# sample action
 def sample_action(obs, epsilon):
     rv = random.random()
     if rv < epsilon:
@@ -14,7 +14,7 @@ def sample_action(obs, epsilon):
     else:
         return np.argmax(q_table[obs])
 
-
+# Q-learning 학습
 def train():
     alpha = 0.1
     epsilon = 0.1
@@ -43,6 +43,7 @@ def train():
         if (n_epi != 0) and (n_epi % 20 == 0):
             print("n_epi: {}, score : {:.1f}, eps: {:.1f}%".format(n_epi, score, epsilon*100))
             
+# evaluation            
 def eval():
     for n_epi in range(10):
         s, info = env_eval.reset()
@@ -58,37 +59,16 @@ def eval():
             score += r
             iter += 1
             done = (terminated or truncated)
-        #if (n_epi != 0) and (n_epi % 20 == 0):
+            # logs in episode
             print("action: {}, reward : {:.1f}".format(a, r))
-            '''
-            frames.append({
-                'frame': env.render(mode='ansi'),
-                'episode': '0',
-                'state': s,
-                'action': a,
-                'reward': r
-                }        
-            )
-            '''
+        # logs per episode
         print("n_epi: {}, score : {:.1f}, iter : {}".format(n_epi, score, iter))
 
-
-def print_frames(frames):
-    for i, frame in enumerate(frames):
-        #clear_output(wait=True)
-        print(frame['frame'])
-        print(f"Episode: {frame['episode']}")
-        print(f"Timestep: {i + 1}")
-        print(f"State: {frame['state']}")
-        print(f"Action: {frame['action']}")
-        print(f"Reward: {frame['reward']}")
-        time.sleep(1)
-
+#main
 if __name__ == '__main__':
     env = gym.make("Taxi-v3")
     env_eval = gym.make("Taxi-v3", render_mode = "human")
     q_table = np.zeros([env.observation_space.n, env.action_space.n])    
-    frames = []
 
     train()
     eval()

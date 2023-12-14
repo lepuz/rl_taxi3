@@ -8,7 +8,7 @@ import random
 def load_model():
 
     # 딕셔너리 형태 파라미터 load
-    checkpoint = torch.load('ckpt/checkpoint_ep_10_score_-1244.pt')
+    checkpoint = torch.load('ckpt/checkpoint_ep_30247_score_13.pt')
     # 모델 구조 생성
     model = DQN()
     # 모델 파라미터 load
