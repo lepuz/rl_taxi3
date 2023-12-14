@@ -33,8 +33,8 @@ def train():
             q_value = q_table[s, a]
             max_q_prime = np.max(q_table[s_prime])
 
-            #q-learning algorithm
-            q_table[s, a] = (1-alpha) * q_value + alpha * (r + gamma*max_q_prime)
+            #q-learning update rule
+            q_table[s, a] = q_value + alpha * (r + gamma*max_q_prime - q_value)
             
             s = s_prime
             score += r
@@ -44,21 +44,22 @@ def train():
             print("n_epi: {}, score : {:.1f}, eps: {:.1f}%".format(n_epi, score, epsilon*100))
             
 def eval():
-    for n_epi in range(100):
+    for n_epi in range(10):
         s, info = env_eval.reset()
 
         done = False
         score = 0
+        iter = 0
 
         while not done:
             a = np.argmax(q_table[s])
             s, r, terminated, truncated, _ = env_eval.step(a)
 
             score += r
-            
+            iter += 1
             done = (terminated or truncated)
         #if (n_epi != 0) and (n_epi % 20 == 0):
-            print("n_epi: {}, action: {}, reward : {:.1f}".format(n_epi, a, r))
+            print("action: {}, reward : {:.1f}".format(a, r))
             '''
             frames.append({
                 'frame': env.render(mode='ansi'),
@@ -69,6 +70,7 @@ def eval():
                 }        
             )
             '''
+        print("n_epi: {}, score : {:.1f}, iter : {}".format(n_epi, score, iter))
 
 
 def print_frames(frames):

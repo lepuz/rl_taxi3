@@ -91,7 +91,7 @@ def train(q, q_target, memory, optimizer):
         q_out = q(s)
 
         #q_a = q_out.gather(1, a.to(device))
-        #action에 대한 q값을 얻어오기 위함, predicted value
+        #action에 대한 q값을 얻어오기 위함, predicted value 
         q_a = q_out.gather(1, a)
 
         s_prime = decode_state(s_prime, n_batch)

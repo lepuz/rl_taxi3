@@ -26,28 +26,36 @@ model.eval()
 
 epsilon = 0.0
 
-for n_epi in range(500):
-    taxi_row, taxi_col, passenger_idx, destination_idx = x.decode(state)
-    state = torch.tensor(np.reshape([taxi_row, taxi_col, passenger_idx, destination_idx], [1, 4])).type(torch.float32)
-    prediction = model(state)
+for n_epi in range(10):
+    s, info = env.reset()
 
-    action = torch.argmax(prediction)
-    action = prediction.argmax()
+    done = False
+    score = 0
+    iter = 0
 
-    rv = random.random()
-    if rv < epsilon:
-        action =  random.randint(0, 5)
-    else:
-        action = action.argmax().item()
+    while not done:
+        taxi_row, taxi_col, passenger_idx, destination_idx = x.decode(s)
+        state = torch.tensor(np.reshape([taxi_row, taxi_col, passenger_idx, destination_idx], [1, 4])).type(torch.float32)
+        prediction = model(state)
 
-    next_state, reward, terminated, truncated, info = env.step(action)
+        action = torch.argmax(prediction)
+        action = prediction.argmax()
 
-    print("n_epi: {}, action: {}, reward : {:.1f}".format(n_epi, action, reward))
+        rv = random.random()
+        if rv < epsilon:
+            action =  random.randint(0, 5)
+        else:
+            action = action.argmax().item()
 
-    if terminated or truncated:
-        state, info = env.reset()
-    state = next_state
-env.close()
+        next_state, reward, terminated, truncated, info = env.step(action)
+
+        print("n_epi: {}, action: {}, reward : {:.1f}".format(n_epi, action, reward))
+
+        if terminated or truncated:
+            state, info = env.reset()
+        state = next_state
+
+    print("n_epi: {}, score : {:.1f}, iter : {}".format(n_epi, score, iter))
 
 
 
